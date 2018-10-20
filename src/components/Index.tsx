@@ -1,7 +1,7 @@
 import {
     AppBar,
     createStyles,
-    CssBaseline, Icon,
+    CssBaseline, Icon, SwipeableDrawer,
     Theme,
     Toolbar,
     Typography,
@@ -12,10 +12,16 @@ import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import * as React from 'react';
 import * as logo from '../logo.svg';
 import * as backgroundImage from './background-images/black-wallpaper-dark-galaxy-14676.jpg';
+import {Entity} from "./Entity";
 import {Graph} from './Graph';
 import createTheme from "./theme";
 
 const styles = (t: Theme) => createStyles({
+    entityPanelPaper: {
+        // TODO: Move this into theme
+        backgroundColor: "rgba(96, 125, 139, 0.5)",
+        paddingTop: "4.6rem"
+    },
     icon: {
         marginRight: t.spacing.unit * 2
     },
@@ -28,8 +34,8 @@ const styles = (t: Theme) => createStyles({
         width: "100%",
 
     },
-    // TODO: Move this into theme
     navBar: {
+        // TODO: Move this into theme
         backgroundColor: "rgba(96, 125, 139, 0.5)"
     },
 
@@ -39,8 +45,34 @@ const theme = createTheme();
 
 interface IProps extends WithStyles<typeof styles>  {}
 
+interface IState {
+    entityId?: string
+    entityPanelVisible: boolean
+}
+
 export const Index = withStyles(styles)(
-    class extends React.Component<IProps, {}> {
+    class extends React.Component<IProps, IState> {
+
+        constructor(props: IProps){
+            super(props);
+            this.state = {
+                entityPanelVisible: false
+            }
+        }
+
+        public selectEntity = (entityId: string) => {
+            this.setState({entityId});
+            this.showEntity()
+        };
+
+
+        public showEntity = () => {
+            this.setState({entityPanelVisible: true})
+        };
+
+        public hideEntity = () => {
+            this.setState({entityPanelVisible: false})
+        };
 
       public render() {
 
@@ -52,13 +84,23 @@ export const Index = withStyles(styles)(
               <div className={classes.index}>
                   <AppBar elevation={0} className={classes.navBar}>
                       <Toolbar>
-                          <Icon fontSize="large" className={classes.icon}><img src={logo}/></Icon>
+                          <Icon fontSize="large" className={classes.icon}>
+                              <img src={logo}/>
+                          </Icon>
                           <Typography variant="h6" color="inherit">
                               Theotikus
                           </Typography>
                       </Toolbar>
                   </AppBar>
-                  <Graph/>
+                  <SwipeableDrawer
+                      open={this.state.entityPanelVisible}
+                      onClose={this.hideEntity}
+                      onOpen={this.showEntity}
+                      classes={{paper: classes.entityPanelPaper}}
+                  >
+                      <Entity entityId={this.state.entityId}/>
+                  </SwipeableDrawer>
+                  <Graph selectEntity={this.selectEntity}/>
               </div>
             </MuiThemeProvider>
         );

@@ -5,10 +5,10 @@ declare module 'react-vis-force' {
 
     export interface ISimulationOptionsStrength{
         // see strengths in the d3-force documentation
-        charge: number // | (...args: any[]): void
-        collide: number // | (...args: any[]) void
-        x: () => void | number
-        y: () => void | number
+        charge?: number // | (...args: any[]): void
+        collide?: number // | (...args: any[]) void
+        x?(params: {radius: number}): number
+        y?(params: {radius: number}): number
     }
 
     export interface ISimulationOptions{
@@ -22,12 +22,14 @@ declare module 'react-vis-force' {
         alphaTarget?: number
         velocityDecay?: number
         radiusMargin?: number
+        draggable?: boolean
     }
     // linkAttrs: object[],
     // nodeAttrs: object[],
 
     export interface IForceGraphProps{
-        zoom?: boolean | {
+        zoom?: boolean
+        zoomOptions?: {
             minScale: number
             maxScale: number
             zoomSpeed: number
@@ -44,7 +46,6 @@ declare module 'react-vis-force' {
     }
 
     export class ForceGraph extends React.Component<IForceGraphProps, {}>{}
-
 
     export interface INode{
         id: string

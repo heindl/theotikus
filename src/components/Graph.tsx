@@ -1,7 +1,10 @@
 import {createStyles, Theme, withStyles, WithStyles} from "@material-ui/core";
 import * as React from 'react';
-import {ForceGraphLink, ForceGraphNode, ILink, InteractiveForceGraph} from 'react-vis-force';
-import {fetchPeople, IFetchResponse, IWikiNode} from "../sparql/wikidata";
+import {SyntheticEvent} from "react";
+import {ForceGraphLink, ForceGraphNode, ILink, INode, InteractiveForceGraph} from 'react-vis-force';
+import {GlobalLogger} from "../utils/logging";
+import {fetchPeople} from "../wikidata/people";
+import {IWikiNode} from "../wikidata/wikidata";
 
 const styles = (_: Theme) => createStyles({
     '@global': {
@@ -11,32 +14,43 @@ const styles = (_: Theme) => createStyles({
         },
     },
     node: {
-            strokeWidth: 0,
-    },
+        strokeWidth: 0,
+    }
 });
 
-interface IProps extends WithStyles<typeof styles>  {}
+interface IProps extends WithStyles<typeof styles>  {
+    selectEntity(entityId?: string): void
+}
+
+interface IState{
+    links: Map<string, ILink>,
+    nodes: Map<string, IWikiNode>
+}
 
 export const Graph = withStyles(styles)(
-    class extends React.Component<IProps, IFetchResponse> {
+    class extends React.Component<IProps, IState> {
 
         constructor(props: IProps) {
             super(props);
-            fetchPeople()
-                .then((res) => {
-                    this.setState({links: res.links, nodes:res.nodes})
-                }).catch(
-                    // tslint:disable:no-console
-                    console.error
-            );
+            fetchPeople().then((s) => {
+                this.setState({nodes: s.nodes, links: s.links})
+            }).catch(GlobalLogger.Error);
         }
+
+        public selectNode = (e: SyntheticEvent, nd: INode) => {
+            this.props.selectEntity(nd.id)
+        };
+
+        public deselectNode = (e: SyntheticEvent, nd: INode) => {
+            this.props.selectEntity("")
+        };
 
         public render() {
 
             const {classes} = this.props;
 
             if (!this.state || !this.state.nodes) {
-                return <div className="App"/>
+                return <div/>
             }
 
             return (
@@ -44,11 +58,23 @@ export const Graph = withStyles(styles)(
                         labelAttr="label"
                         highlightDependencies={true}
                         simulationOptions={{
+                            alpha: 1,
                             animate: true,
+                            draggable: true
                         }}
+                        onSelectNode={this.selectNode}
+                        onDeselectNode={this.deselectNode}
+                        zoom={true}
                     >
-                        {Array.from(this.state.nodes.values()).map((n: IWikiNode)=> {
-                            return <ForceGraphNode className={classes.node} key={n.id()} node={n.node()} fill={n.color()} />
+                        {Array.from(this.state.nodes.values()).map((nd: IWikiNode)=> {
+                            return (
+                                <ForceGraphNode
+                                    className={classes.node}
+                                    key={nd.id()}
+                                    node={nd.node()}
+                                    fill={nd.color()}
+                                />
+                            )
                         })}
                         {Array.from(this.state.links.values()).map((l: ILink)=> {
                             return <ForceGraphLink key={`${l.source}=>${l.target}`} link={l} />
@@ -57,4 +83,4 @@ export const Graph = withStyles(styles)(
             );
         }
     }
-)
+);
