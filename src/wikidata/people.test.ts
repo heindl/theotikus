@@ -1,12 +1,17 @@
-import {fetchGraph} from './graph'
+import { fetchGraph } from "./graph";
 
-it('should fetch wikidata', (done) => {
-    fetchGraph().then((res) => {
+it(
+  "should fetch wikidata",
+  done => {
+    fetchGraph()
+      .then(res => {
         // tslint:disable:no-console
-        Array.from(res.nodes.values()).map((d) => {
-            console.log(d.node())
+        Array.from(res.nodes.values()).map(d => {
+          console.log(d.node());
         });
-        done()
-    }).catch(done.fail);
-
-}, 100000);
+        done();
+      })
+      .catch(done.fail);
+  },
+  100000
+);

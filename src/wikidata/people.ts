@@ -1,14 +1,14 @@
 import Axios from "axios";
 import * as sdk from "wikidata-sdk";
-import {IWikiNode, IWikiResponse, LinkSet} from "./wikidata";
+import { IWikiNode, IWikiResponse, LinkSet } from "./wikidata";
 
-interface IGraphElements{
-    links: LinkSet,
-    nodes: Map<string, IWikiNode>
+interface IGraphElements {
+  links: LinkSet;
+  nodes: Map<string, IWikiNode>;
 }
 
 export const fetchPeople = async (): Promise<IGraphElements> => {
-    const u =  sdk.sparqlQuery(`
+  const u = sdk.sparqlQuery(`
                 SELECT DISTINCT ?src ?srcLabel ?srcGender ?tgt ?tgtLabel ?tgtGender ?srcInstanceOfLabel ?tgtInstanceOfLabel WHERE {
                   ?src (wdt:P361|wdt:P140|wdt:P1049|wdt:P2596) wd:Q275051; 
                                                      wdt:P31/wdt:P279* wd:Q215627|Q95074|Q28855038|Q15619164; 
@@ -27,26 +27,25 @@ export const fetchPeople = async (): Promise<IGraphElements> => {
                 }
             `);
 
-    const res = await Axios.get(u);
+  const res = await Axios.get(u);
 
-    const o: IGraphElements = {
-        links: new LinkSet(),
-        nodes: new Map<string, IWikiNode>(),
-    };
-    sdk.simplify.sparqlResults(res.data).forEach((obj: IWikiResponse) => {
-
-        const src = new IWikiNode("src", obj);
-        const tgt = new IWikiNode("tgt", obj);
-        // Ignore values where the label is the entity link: Q12345...
-        if (!src.valid()) {
-            return
-        }
-        o.nodes.set(src.id(), src);
-        if (!tgt.valid()) {
-            return
-        }
-        o.nodes.set(tgt.id(), tgt);
-        o.links.add(src.id(), tgt.id());
-    });
-    return o
+  const o: IGraphElements = {
+    links: new LinkSet(),
+    nodes: new Map<string, IWikiNode>()
+  };
+  sdk.simplify.sparqlResults(res.data).forEach((obj: IWikiResponse) => {
+    const src = new IWikiNode("src", obj);
+    const tgt = new IWikiNode("tgt", obj);
+    // Ignore values where the label is the entity link: Q12345...
+    if (!src.valid()) {
+      return;
+    }
+    o.nodes.set(src.id(), src);
+    if (!tgt.valid()) {
+      return;
+    }
+    o.nodes.set(tgt.id(), tgt);
+    o.links.add(src.id(), tgt.id());
+  });
+  return o;
 };

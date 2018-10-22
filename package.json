@@ -2,7 +2,7 @@
   "name": "theotokus",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://www.theotokus.com",
+  "homepage": "https://theotokus.com",
   "dependencies": {
     "@material-ui/core": "^3.3.0",
     "@material-ui/icons": "^3.0.1",
@@ -20,6 +20,7 @@
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject",
+    "format": "prettier --write \"src/**/*.tsx\" \"src/**/*.ts\"",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
@@ -37,6 +38,7 @@
     "enzyme-adapter-react-16": "^1.6.0",
     "gh-pages": "^2.0.1",
     "prettier": "^1.14.3",
+    "tslint-plugin-prettier": "^2.0.0",
     "typescript": "^3.1.3"
   }
 }
