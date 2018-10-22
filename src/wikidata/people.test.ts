@@ -1,7 +1,7 @@
-import {fetchPeople} from './people'
+import {fetchGraph} from './graph'
 
 it('should fetch wikidata', (done) => {
-    fetchPeople().then((res) => {
+    fetchGraph().then((res) => {
         // tslint:disable:no-console
         Array.from(res.nodes.values()).map((d) => {
             console.log(d.node())

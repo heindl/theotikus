@@ -4,3 +4,4 @@
 
 ### Useful Wikidata resources
 • https://tools.wmflabs.org/sqid/#/
+•https://tools.wmflabs.org/dataviz/

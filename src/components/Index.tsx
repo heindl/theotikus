@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import * as React from 'react';
+import {SyntheticEvent} from "react";
 import * as logo from '../logo.svg';
 import * as backgroundImage from './background-images/black-wallpaper-dark-galaxy-14676.jpg';
 import {Entity} from "./Entity";
@@ -60,11 +61,18 @@ export const Index = withStyles(styles)(
             }
         }
 
-        public selectEntity = (entityId: string) => {
+        public selectEntity = (entityId?: string) => {
             this.setState({entityId});
             this.showEntity()
         };
 
+        public examineClickEvent = (e: SyntheticEvent) => {
+            if (!e.target || e.target.toString().indexOf("SVGCircleElement") === -1) {
+                if (!this.state.entityPanelVisible) {
+                    this.setState({entityId: undefined})
+                }
+            }
+        };
 
         public showEntity = () => {
             this.setState({entityPanelVisible: true})
@@ -81,7 +89,7 @@ export const Index = withStyles(styles)(
         return (
             <MuiThemeProvider theme={theme} >
             <CssBaseline/>
-              <div className={classes.index}>
+              <div className={classes.index} onClick={this.examineClickEvent}>
                   <AppBar elevation={0} className={classes.navBar}>
                       <Toolbar>
                           <Icon fontSize="large" className={classes.icon}>
@@ -100,7 +108,7 @@ export const Index = withStyles(styles)(
                   >
                       <Entity entityId={this.state.entityId}/>
                   </SwipeableDrawer>
-                  <Graph selectEntity={this.selectEntity}/>
+                  <Graph selectEntity={this.selectEntity} selectedEntityId={this.state.entityId}/>
               </div>
             </MuiThemeProvider>
         );

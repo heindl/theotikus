@@ -88,3 +88,19 @@ export class IWikiNode {
         // }
     }
 }
+
+export class LinkSet{
+    public set: string[][] = [];
+
+    public add = (x: string, y: string) => {
+        if (!this.has(x, y)) {
+            this.set.push([x, y])
+        }
+    };
+
+    public has = (x: string, y: string): boolean => {
+        return this.set.filter((v: string[]) =>{
+            return (v.indexOf(x) !== -1 && v.indexOf(y) !== -1)
+        }).length > 0
+    }
+}

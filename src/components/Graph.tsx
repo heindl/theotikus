@@ -1,10 +1,10 @@
 import {createStyles, Theme, withStyles, WithStyles} from "@material-ui/core";
 import * as React from 'react';
 import {SyntheticEvent} from "react";
-import {ForceGraphLink, ForceGraphNode, ILink, INode, InteractiveForceGraph} from 'react-vis-force';
+import {ForceGraphLink, ForceGraphNode, INode, InteractiveForceGraph} from 'react-vis-force';
 import {GlobalLogger} from "../utils/logging";
-import {fetchPeople} from "../wikidata/people";
-import {IWikiNode} from "../wikidata/wikidata";
+import {fetchGraph, IGraphNode} from "../wikidata/graph";
+import {LinkSet} from "../wikidata/wikidata";
 
 const styles = (_: Theme) => createStyles({
     '@global': {
@@ -19,12 +19,13 @@ const styles = (_: Theme) => createStyles({
 });
 
 interface IProps extends WithStyles<typeof styles>  {
+    selectedEntityId?: string
     selectEntity(entityId?: string): void
 }
 
 interface IState{
-    links: Map<string, ILink>,
-    nodes: Map<string, IWikiNode>
+    links: LinkSet,
+    nodes: Map<string, IGraphNode>
 }
 
 export const Graph = withStyles(styles)(
@@ -32,7 +33,7 @@ export const Graph = withStyles(styles)(
 
         constructor(props: IProps) {
             super(props);
-            fetchPeople().then((s) => {
+            fetchGraph().then((s) => {
                 this.setState({nodes: s.nodes, links: s.links})
             }).catch(GlobalLogger.Error);
         }
@@ -41,9 +42,10 @@ export const Graph = withStyles(styles)(
             this.props.selectEntity(nd.id)
         };
 
-        public deselectNode = (e: SyntheticEvent, nd: INode) => {
-            this.props.selectEntity("")
-        };
+        // This seems to be in-effective
+        // public deselectNode = (e: SyntheticEvent, nd: INode) => {
+        //     this.props.selectEntity()
+        // };
 
         public render() {
 
@@ -58,15 +60,20 @@ export const Graph = withStyles(styles)(
                         labelAttr="label"
                         highlightDependencies={true}
                         simulationOptions={{
-                            alpha: 1,
+                            alpha: 0.5,
                             animate: true,
-                            draggable: true
+                            draggable: true,
+                            strength: {
+                                charge: -50,
+                            },
                         }}
                         onSelectNode={this.selectNode}
-                        onDeselectNode={this.deselectNode}
+                        // This seems to be ineffective
+                        // onDeselectNode={this.deselectNode}
+                        selectedNode={(!this.props.selectedEntityId || this.props.selectedEntityId === "") ? undefined : {id: this.props.selectedEntityId}}
                         zoom={true}
                     >
-                        {Array.from(this.state.nodes.values()).map((nd: IWikiNode)=> {
+                        {Array.from(this.state.nodes.values()).map((nd: IGraphNode)=> {
                             return (
                                 <ForceGraphNode
                                     className={classes.node}
@@ -76,8 +83,8 @@ export const Graph = withStyles(styles)(
                                 />
                             )
                         })}
-                        {Array.from(this.state.links.values()).map((l: ILink)=> {
-                            return <ForceGraphLink key={`${l.source}=>${l.target}`} link={l} />
+                        {this.state.links.set.map((l: string[])=> {
+                            return <ForceGraphLink key={`${l[0]}=>${l[1]}`} link={{source: l[0], target: l[1]}} />
                         })}
                     </InteractiveForceGraph>
             );
