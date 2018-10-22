@@ -67,10 +67,13 @@ export const Index = withStyles(styles)(
         };
 
         public examineClickEvent = (e: SyntheticEvent) => {
-            if (!e.target || e.target.toString().indexOf("SVGCircleElement") === -1) {
-                if (!this.state.entityPanelVisible) {
-                    this.setState({entityId: undefined})
-                }
+
+            // tslint:disable:no-string-literal
+            const clickOccurredInCircle = e.target && e.target["tagName"] !== "undefined" && e.target["tagName"] === "circle";
+
+
+            if (!clickOccurredInCircle && !this.state.entityPanelVisible) {
+                this.setState({entityId: undefined})
             }
         };
 

@@ -44,7 +44,7 @@ export const Graph = withStyles(styles)(
 
         // This seems to be in-effective
         // public deselectNode = (e: SyntheticEvent, nd: INode) => {
-        //     this.props.selectEntity()
+            // this.props.selectEntity()
         // };
 
         public render() {
@@ -84,7 +84,7 @@ export const Graph = withStyles(styles)(
                             )
                         })}
                         {this.state.links.set.map((l: string[])=> {
-                            return <ForceGraphLink key={`${l[0]}=>${l[1]}`} link={{source: l[0], target: l[1]}} />
+                            return <ForceGraphLink key={`${l[0]}=>${l[1]}`} link={{source: l[0], target: l[1], value: 1}} />
                         })}
                     </InteractiveForceGraph>
             );

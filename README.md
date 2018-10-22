@@ -1,4 +1,4 @@
-# Theotikus
+# Theotokus
 
 #### A graph visualization of religious events in Wikidata.
 

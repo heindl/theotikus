@@ -62,14 +62,14 @@ export class IGraphNode {
         // }
         //
         // if (i.indexOf("deity") !== -1 || i.indexOf("god") !== -1) {
-        //     return "#e9c77b"
+            return "#e9c77b"
         // }
         //
         // if (i.indexOf("human") !== -1) {
         //     return "#e2b498"
         // }
 
-        return "#9aabb9";
+        // return "#9aabb9";
 
         // switch (this.gender()) {
         //     case "Q6581072":
