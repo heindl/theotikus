@@ -6,6 +6,8 @@
 # IMAGES
 background-images
 
+# config
+.env*
 
 # dependencies
 /node_modules
